@@ -1,4 +1,3 @@
-
 const express = require('express');
 const mysql = require('mysql');
 
@@ -14,35 +13,42 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
-app.get('/.netlify/functions/getData', (req, res) => {
-  const sqlStatement = 'SELECT * FROM test_table';
+const handler = async (event, context) => {
+  return new Promise((resolve, reject) => {
+    const sqlStatement = 'SELECT * FROM test_table';
 
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error connecting to database:', err);
-      res.status(500).send('Internal Server Error');
-      return;
-    }
-
-    connection.query(sqlStatement, (queryError, results) => {
-      connection.release();
-
-      if (queryError) {
-        console.error('Error executing query:', queryError);
-        res.status(500).send('Internal Server Error');
+    pool.getConnection((err, connection) => {
+      if (err) {
+        console.error('Error connecting to database:', err);
+        resolve({
+          statusCode: 500,
+          body: 'Internal Server Error'
+        });
         return;
       }
 
-      const jsonResult = JSON.stringify(results);
-      res.send(jsonResult);
+      connection.query(sqlStatement, (queryError, results) => {
+        connection.release();
+
+        if (queryError) {
+          console.error('Error executing query:', queryError);
+          resolve({
+            statusCode: 500,
+            body: 'Internal Server Error'
+          });
+          return;
+        }
+
+        const jsonResult = JSON.stringify(results);
+        resolve({
+          statusCode: 200,
+          body: jsonResult
+        });
+      });
     });
   });
-});
+};
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = { handler };
 
 
