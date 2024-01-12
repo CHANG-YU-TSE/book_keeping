@@ -15,7 +15,10 @@ const pool = mysql.createPool(dbConfig);
 
 const handler = async (event, context) => {
   return new Promise((resolve, reject) => {
-    const sqlStatement = 'SELECT * FROM test_table';
+    // 從 query 參數中獲取 SQL statement，若未提供預設為 select * from test_table
+    const sqlStatement = event.queryStringParameters && event.queryStringParameters.sql
+      ? event.queryStringParameters.sql
+      : 'SELECT * FROM test_table';
 
     pool.getConnection((err, connection) => {
       if (err) {
@@ -50,5 +53,3 @@ const handler = async (event, context) => {
 };
 
 module.exports = { handler };
-
-
