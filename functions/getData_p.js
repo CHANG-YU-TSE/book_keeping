@@ -1,25 +1,25 @@
-const express = require('express');
+  const express = require('express');
 const mysql = require('mysql');
 
 const app = express();
 app.use(express.json()); // 解析 POST 請求的 JSON body
 
-const dbConfig = {
-  host: 'mysql.sqlpub.com',
-  user: 'herb_db_user',
-  password: 'nk45Mte4Zhb5hw9K',
-  database: 'herb_db',
-  port: 3306
-};
-
-const pool = mysql.createPool(dbConfig);
-
 const handler = async (event, context) => {
   return new Promise((resolve, reject) => {
-    // 從 POST 請求的 JSON body 中獲取 SQL statement
+    // 從 POST 請求的 JSON body 中獲取 SQL statement 和其他參數
     const sqlStatement = event.body && event.body.sql
       ? event.body.sql
       : 'SELECT * FROM test_table';
+
+    const dbConfig = {
+      host: event.body && event.body.host ? event.body.host : 'mysql.sqlpub.com',
+      user: event.body && event.body.user ? event.body.user : 'herb_db_user',
+      password: event.body && event.body.password ? event.body.password : 'nk45Mte4Zhb5hw9K',
+      database: event.body && event.body.database ? event.body.database : 'herb_db',
+      port: event.body && event.body.port ? parseInt(event.body.port, 10) : 3306
+    };
+
+    const pool = mysql.createPool(dbConfig);
 
     pool.getConnection((err, connection) => {
       if (err) {
