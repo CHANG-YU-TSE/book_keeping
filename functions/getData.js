@@ -1,3 +1,4 @@
+
 const express = require('express');
 const mysql = require('mysql');
 
@@ -13,7 +14,7 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
-app.get('/getData', (req, res) => {
+app.get('/.netlify/functions/getData', (req, res) => {
   const sqlStatement = 'SELECT * FROM test_table';
 
   pool.getConnection((err, connection) => {
@@ -43,3 +44,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+exports.handler = async (event, context) =>
