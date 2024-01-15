@@ -17,9 +17,9 @@ const pool = mysql.createPool(dbConfig);
 const handler = async (event, context) => {
   return new Promise((resolve, reject) => {
     // 從 POST 請求的 JSON body 中獲取 SQL statement
-    const sqlStatement = event.body && event.body.sql
-      ? event.body.sql
-      : 'SELECT * FROM test_table';
+  const sqlStatement = req.body && req.body.sql
+  ? req.body.sql
+  : 'SELECT * FROM test_table';
 
     pool.getConnection((err, connection) => {
       if (err) {
