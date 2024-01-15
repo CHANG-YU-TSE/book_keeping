@@ -19,7 +19,7 @@ const handler = async (event, context) => {
     // 從 POST 請求的 JSON body 中獲取 SQL statement
     const sqlStatement = event.body && event.body.sql
       ? event.body.sql
-      : 'SELECT f2 FROM test_table';
+      : 'SELECT * FROM test_table';
 
     pool.getConnection((err, connection) => {
       if (err) {
