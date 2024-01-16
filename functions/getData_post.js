@@ -1,53 +1,24 @@
 const express = require('express');
-const mysql = require('mysql');
 const bodyParser = require('body-parser');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-const dbConfig = {
-  host: 'mysql.sqlpub.com',
-  user: 'herb_db_user',
-  password: 'nk45Mte4Zhb5hw9K',
-  database: 'herb_db',
-  port: 3306
+exports.handler = async (event, context) => {
+  // 確認請求方法為 POST
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: 'Not POST Method',
+    };
+  }
+
+  // 從 POST 資料中獲取引數 abc
+  const sqlValue = JSON.parse(event.body).sql || 'No value provided for sql';
+
+  // 回傳引數 abc 的值給呼叫者
+  return {
+    statusCode: 200,
+    body: `${sqlValue}`,
+  };
 };
-
-// 設定路由處理 HTTP POST 請求
-app.post('getData_post', (req, res) => {
-  // 從 POST 資料中獲取引數 sql
-  const sqlStatement = req.body.sql || 'SELECT * FROM test_table';
-
-  // 創建數據庫連接
-  const connection = mysql.createConnection(dbConfig);
-
-  // 連接到數據庫
-  connection.connect((err) => {
-    if (err) {
-      console.error('Error connecting to database:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-
-    // 執行 SQL 查詢
-    connection.query(sqlStatement, (queryError, results) => {
-      // 關閉數據庫連接
-      connection.end();
-
-      if (queryError) {
-        console.error('Error executing query:', queryError);
-        res.status(500).json({ error: 'Internal Server Error' });
-        return;
-      }
-
-      // 將結果轉換為 JSON 格式
-      const jsonResult = JSON.stringify(results);
-
-      // 返回 JSON 格式的結果
-      res.status(200).json({ result: jsonResult });
-    });
-  });
-});
-
-// 導出 handler 函數
-exports.handler = app;
