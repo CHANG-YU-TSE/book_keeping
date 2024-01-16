@@ -1,7 +1,9 @@
 const express = require('express');
-const mysql = require('mysql2');
+const mysql = require('mysql');
+const bodyParser = require('body-parser');
 
 const app = express();
+app.use(bodyParser.json());
 
 const dbConfig = {
   host: 'mysql.sqlpub.com',
@@ -11,33 +13,39 @@ const dbConfig = {
   port: 3306
 };
 
-// 使用 middleware 解析 JSON 資料
-app.use(express.json());
-
 // 設定路由處理 HTTP POST 請求
-app.post('getData_post', (req, res) => {
+app.post('/api/get-data', (req, res) => {
   // 從 POST 資料中獲取引數 sql
-  const sqlValue = req.body.sql || 'No value provided for sql';
+  const sqlStatement = req.body.sql || 'SELECT * FROM test_table';
 
-  // 建立數據庫連接池
-  const pool = mysql.createPool(dbConfig);
+  // 創建數據庫連接
+  const connection = mysql.createConnection(dbConfig);
 
-  // 執行 SQL 查詢
-  pool.query(sqlValue, (queryError, results) => {
-    // 釋放數據庫連接
-    pool.end();
-
-    if (queryError) {
-      console.error('Error executing query:', queryError);
+  // 連接到數據庫
+  connection.connect((err) => {
+    if (err) {
+      console.error('Error connecting to database:', err);
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
 
-    // 將結果轉換為 JSON 格式
-    const jsonResult = JSON.stringify(results);
+    // 執行 SQL 查詢
+    connection.query(sqlStatement, (queryError, results) => {
+      // 關閉數據庫連接
+      connection.end();
 
-    // 返回 JSON 格式的結果
-    res.status(200).json({ result: jsonResult });
+      if (queryError) {
+        console.error('Error executing query:', queryError);
+        res.status(500).json({ error: 'Internal Server Error' });
+        return;
+      }
+
+      // 將結果轉換為 JSON 格式
+      const jsonResult = JSON.stringify(results);
+
+      // 返回 JSON 格式的結果
+      res.status(200).json({ result: jsonResult });
+    });
   });
 });
 
