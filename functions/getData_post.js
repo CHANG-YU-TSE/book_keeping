@@ -39,31 +39,27 @@ exports.handler = async (event, context) => {
 const pool = mysql.createPool(dbConfig);
   pool.getConnection((err, connection) => {
       if (err) {
-        console.error('Error connecting to database:', err);
-        resolve({
-          statusCode: 500,
-          body: 'Internal Server Error'
-        });
-        return;
+
+
+        
       }
 
       connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
         if (queryError) {
-          console.error('Error executing query:', queryError);
-          resolve({
-            statusCode: 500,
-            body: 'Internal Server Error'
-          });
-          return;
+          
+
+          
         }
 
         const jsonResult = JSON.stringify(results);
         resolve({
-          statusCode: 200,
-          body: jsonResult
+          
+
+          
+            jsonResult
         });
       });
     });
-  module.exports {handler};
+  };
