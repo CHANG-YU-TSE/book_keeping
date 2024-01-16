@@ -1,51 +1,56 @@
 const express = require('express');
 const mysql = require('mysql');
-const bodyParser = require('body-parser');
 
 const app = express();
-app.use(bodyParser.json()); // 使用 body-parser 中間件來解析 POST 資料
+app.use(express.json()); // 解析 POST 請求的 JSON body
 
-const dbConfig = {
-  host: 'mysql.sqlpub.com',
-  user: 'herb_db_user',
-  password: 'nk45Mte4Zhb5hw9K',
-  database: 'herb_db',
-  port: 3306
-};
+const handler = async (event, context) => {
+  return new Promise((resolve, reject) => {
+    // 從 POST 請求的 JSON body 中獲取 SQL statement 和其他參數
+    const sqlStatement = event.body && event.body.sql
+      ? event.body.sql
+      : 'SELECT * FROM test_table';
 
-const pool = mysql.createPool(dbConfig);
+    const dbConfig = {
+      host: event.body && event.body.host ? event.body.host : 'mysql.sqlpub.com',
+      user: event.body && event.body.user ? event.body.user : 'herb_db_user',
+      password: event.body && event.body.password ? event.body.password : 'nk45Mte4Zhb5hw9K',
+      database: event.body && event.body.database ? event.body.database : 'herb_db',
+      port: event.body && event.body.port ? parseInt(event.body.port, 10) : 3306
+    };
 
-const handler = async (req, res) => {
-  // 從 POST 資料中獲取 SQL statement，若未提供預設為 select * from test_table
-  const sqlStatement = req.body && req.body.sql
-    ? req.body.sql
-    : 'SELECT * FROM test_table';
+    const pool = mysql.createPool(dbConfig);
 
-  pool.getConnection((err, connection) => {
-    if (err) {
-      console.error('Error connecting to database:', err);
-      res.status(500).json({ error: 'Internal Server Error' });
-      return;
-    }
-
-    connection.query(sqlStatement, (queryError, results) => {
-      connection.release();
-
-      if (queryError) {
-        console.error('Error executing query:', queryError);
-        res.status(500).json({ error: 'Internal Server Error' });
+    pool.getConnection((err, connection) => {
+      if (err) {
+        console.error('Error connecting to database:', err);
+        resolve({
+          statusCode: 500,
+          body: 'Internal Server Error'
+        });
         return;
       }
 
-      const jsonResult = JSON.stringify(results);
-      res.status(200).json({ data: jsonResult });
+      connection.query(sqlStatement, (queryError, results) => {
+        connection.release();
+
+        if (queryError) {
+          console.error('Error executing query:', queryError);
+          resolve({
+            statusCode: 500,
+            body: 'Internal Server Error'
+          });
+          return;
+        }
+
+        const jsonResult = JSON.stringify(results);
+        resolve({
+          statusCode: 200,
+          body: jsonResult
+        });
+      });
     });
   });
 };
 
-app.post('/your-api-endpoint', handler);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+module.exports = { handler };
