@@ -13,12 +13,12 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // 從 POST 資料中獲取引數 sql
-  const abcValue = JSON.parse(event.body).sql || 'No value provided for sql';
+  // 從 POST 資料中獲取引數 abc
+  const abcValue = JSON.parse(event.body).abc || 'No value provided for abc';
 
-  // 回傳引數 sql 的值給呼叫者
+  // 回傳引數 abc 的值給呼叫者
   return {
     statusCode: 200,
-    body: `Value of sql: ${sqlValue}`,
+    body: `Value of abc: ${abcValue}`,
   };
 };
