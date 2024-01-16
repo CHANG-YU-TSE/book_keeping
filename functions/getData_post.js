@@ -16,11 +16,11 @@ exports.handler = async (event, context) => {
   // 從 POST 資料中獲取引數 
     const sql = JSON.parse(event.body).sql || 'No value provided for sql';
 
-    const host = JSON.parse(event.body).host ||'mysql.sqlpub.com',
-    const user = JSON.parse(event.body).user ||'herb_db_user',
-    const password = JSON.parse(event.body).password || 'nk45Mte4Zhb5hw9K',
-    const database = JSON.parse(event.body).database ||'herb_db',
-    const port = JSON.parse(event.body).port || 3306
+    const host = JSON.parse(event.body).host ||'mysql.sqlpub.com';
+    const user = JSON.parse(event.body).user ||'herb_db_user';
+    const password = JSON.parse(event.body).password || 'nk45Mte4Zhb5hw9K';
+    const database = JSON.parse(event.body).database ||'herb_db';
+    const port = JSON.parse(event.body).port || 3306;
     
 
   
