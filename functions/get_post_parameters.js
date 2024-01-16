@@ -8,12 +8,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 exports.handler = async (event, context) => {
   
-  return {
-    statusCode: 200,
-    body: `test_fuck`,
-  };
- 
- 
+
  
  // 確認請求方法為 POST
   if (event.httpMethod !== 'POST') {
@@ -24,11 +19,11 @@ exports.handler = async (event, context) => {
   }
 
   // 從 POST 資料中獲取引數 abc
-  const abcValue = JSON.parse(event.body).abc || 'No value provided for abc';
+  const abcValue = JSON.parse(event.body).sql || 'No value provided for sql';
 
   // 回傳引數 abc 的值給呼叫者
   return {
     statusCode: 200,
-    body: `Value of abc: ${abcValue}`,
+    body: `Value of sql: ${sqlValue}`,
   };
 };
