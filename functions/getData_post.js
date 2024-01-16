@@ -13,17 +13,21 @@ const dbConfig = {
 const pool = mysql.createPool(dbConfig);
 
 const handler = async (event, context) => {
-  return new Promise((resolve, reject) => {
 
-    if (event.httpMethod !== 'POST') {
-        return {
-               statusCode: 405,
-               body: 'Not POST Method',
-       };
-    }
+           if (event.httpMethod !== 'POST') {
+            return {
+                   statusCode: 405,
+                  body: 'Not POST Method',
+            };
+          }
+
+
+
+      return new Promise((resolve, reject) => {
+   
 
      // 從 POST 資料中獲取引數 
-     const sqlStatement = JSON.parse(event.body).sql || ''select * from test_table'';
+     const sqlStatement = JSON.parse(event.body).sql || 'select * from test_table';
 
 
 
@@ -60,5 +64,3 @@ const handler = async (event, context) => {
 };
 
 module.exports = { handler };
-
-
