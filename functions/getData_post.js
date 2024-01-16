@@ -34,9 +34,7 @@ exports.handler = async (event, context) => {
 
   
   // 開始連  DB  
-    const pool = mysql.createPool(dbConfig);
-
-const pool = mysql.createPool(dbConfig);
+  const pool = mysql.createPool(dbConfig);
   pool.getConnection((err, connection) => {
       if (err) {
               return {
