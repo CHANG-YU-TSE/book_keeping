@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // 從 POST 資料中獲取引數 abc
+  // 從 POST 資料中獲取引數 
   const sqlValue = JSON.parse(event.body).sql || 'No value provided for sql';
 
   // 回傳引數 abc 的值給呼叫者
