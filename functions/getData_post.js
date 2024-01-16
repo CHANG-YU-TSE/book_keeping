@@ -36,15 +36,16 @@ exports.handler = async (event, context) => {
   // 開始連  DB  
     const pool = mysql.createPool(dbConfig);
 
-    pool.getConnection((err, connection) => {
+    pool.getConnection(err, connection) => {
       if (err) {
           return {
             statusCode: 500,
             body: `${err}`,
          };
       }
+    }
 
-      connection.query(sqlStatement, (queryError, results) => {
+      connection.query(sqlStatement, (queryError, results)) => {
         connection.release();
 
         if (queryError) {
@@ -53,11 +54,11 @@ exports.handler = async (event, context) => {
                       body: `${err}`,
                     };
         }
+      }
 
 
         
         const jsonResult = JSON.stringify(results);
-        // 回傳引數 abc 的值給呼叫者
         return {
               statusCode: 200,
               body: `${jsonResult}`,
