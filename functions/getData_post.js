@@ -36,31 +36,34 @@ exports.handler = async (event, context) => {
   // 開始連  DB  
     const pool = mysql.createPool(dbConfig);
 
-    pool.getConnection(err, connection) => {
+const pool = mysql.createPool(dbConfig);
+  pool.getConnection((err, connection) => {
       if (err) {
-          return {
-            statusCode: 500,
-            body: `${err}`,
-         };
+        console.error('Error connecting to database:', err);
+        resolve({
+          statusCode: 500,
+          body: 'Internal Server Error'
+        });
+        return;
       }
-    }
 
-      connection.query(sqlStatement, (queryError, results)) => {
+      connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
         if (queryError) {
-                    return {
-                      statusCode: 500,
-                      body: `${err}`,
-                    };
+          console.error('Error executing query:', queryError);
+          resolve({
+            statusCode: 500,
+            body: 'Internal Server Error'
+          });
+          return;
         }
-      }
 
-
-        
         const jsonResult = JSON.stringify(results);
-        return {
-              statusCode: 200,
-              body: `${jsonResult}`,
-       };
-};
+        resolve({
+          statusCode: 200,
+          body: jsonResult
+        });
+      });
+    });
+  module.exports {handler};
