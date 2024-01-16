@@ -1,68 +1,65 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const mysql = require('mysql');
-
 const app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
 
-exports.handler = async (event, context) => {
-  // 確認請求方法為 POST
-  if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      body: 'Not POST Method',
-    };
-  }
+const dbConfig = {
+  host: 'mysql.sqlpub.com',
+  user: 'herb_db_user',
+  password: 'nk45Mte4Zhb5hw9K',
+  database: 'herb_db',
+  port: 3306
+};
 
-  // 從 POST 資料中獲取引數 
-    const sqlStatement = JSON.parse(event.body).sql || 'No value provided for sql';
+const pool = mysql.createPool(dbConfig);
 
-    const host_p = JSON.parse(event.body).host ||'mysql.sqlpub.com';
-    const user_p = JSON.parse(event.body).user ||'herb_db_user';
-    const password_p = JSON.parse(event.body).password || 'nk45Mte4Zhb5hw9K';
-    const database_p = JSON.parse(event.body).database ||'herb_db';
-    const port_p = JSON.parse(event.body).port || 3306;
-
-
-      const dbConfig = {
-          host: host_p ,
-          user: user_p,
-          password: password_p,
-          database: database_p ,
-          port: port_p 
-     };
-
+const handler = async (event, context) => {
+  return new Promise((resolve, reject) => {
+    // 從 query 參數中獲取 SQL statement，若未提供預設為 select * from test_table
   
-  // 開始連  DB  
-  const pool = mysql.createPool(dbConfig);
-  pool.getConnection((err, connection) => {
+    if (event.httpMethod !== 'POST') {
+        return {
+               statusCode: 405,
+              body: 'Not POST Method',
+       };
+    }
+
+     // 從 POST 資料中獲取引數 abc
+     const sqlStatement = JSON.parse(event.body).sql || 'No value provided for sql';
+
+
+
+    pool.getConnection((err, connection) => {
       if (err) {
-              return {
-                statusCode: 500,
-                body: `Can not connect to DB`,
-              };
+        console.error('Error connecting to database:', err);
+        resolve({
+          statusCode: 500,
+          body: 'Internal Server Error'
+        });
+        return;
       }
 
       connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
         if (queryError) {
-                  return {
-                    statusCode: 500,
-                    body: `DB internnal Error`,
-                  };
+          console.error('Error executing query:', queryError);
+          resolve({
+            statusCode: 500,
+            body: 'Internal Server Error'
+          });
+          return;
         }
 
         const jsonResult = JSON.stringify(results);
-         
-            return {
-                    statusCode: 200,
-                    body: `${jsonResult}`,
-            };
-
-          
-            
-        
+        resolve({
+          statusCode: 200,
+          body: jsonResult
+        });
       });
     });
-  };
+  });
+};
+
+module.exports = { handler };
+
+
