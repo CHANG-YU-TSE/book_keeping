@@ -17,7 +17,7 @@ const pool = mysql.createPool(dbConfig);
 
 '==========================================================
 
-exports.handler = async (event, context) => {
+
   // 確認請求方法為 POST
   if (event.httpMethod !== 'POST') {
     return {
@@ -52,27 +52,13 @@ exports.handler = async (event, context) => {
         }
 
         const jsonResult = JSON.stringify(results);
-         return {
+        resolve({
           statusCode: 200,
-          body: `${jsonResult}`,
-        };
+          body: jsonResult
+        });
       });
     });
   
+ 
 
-  
-  });
-
-
-'module.exports = { handler };
-
-
-
-  
-
-'  // 回傳引數 abc 的值給呼叫者
-'  return {
-'    statusCode: 200,
-'    body: `${sqlValue}`,
-'  };
-'};
+module.exports = { handler };
