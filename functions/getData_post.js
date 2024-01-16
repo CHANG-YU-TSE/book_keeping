@@ -15,7 +15,7 @@ exports.handler = async (event, context) => {
   }
 
   // 從 POST 資料中獲取引數 
-    const sql = JSON.parse(event.body).sql || 'No value provided for sql';
+    const sqlStatement = JSON.parse(event.body).sql || 'No value provided for sql';
 
     const host = JSON.parse(event.body).host ||'mysql.sqlpub.com';
     const user = JSON.parse(event.body).user ||'herb_db_user';
@@ -29,33 +29,28 @@ exports.handler = async (event, context) => {
 
     pool.getConnection((err, connection) => {
       if (err) {
-        console.error('Error connecting to database:', err);
-        resolve({
-          statusCode: 500,
-          body: 'Internal Server Error'
-        });
-        return;
+          return {
+            statusCode: 500,
+            body: `${err}`,
+         };
       }
 
       connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
         if (queryError) {
-          console.error('Error executing query:', queryError);
-          resolve({
-            statusCode: 500,
-            body: 'Internal Server Error'
-          });
-          return;
+                    return {
+                      statusCode: 500,
+                      body: `${err}`,
+                    };
         }
 
-        const jsonResult = JSON.stringify(results);
-  
-  
 
-  // 回傳引數 abc 的值給呼叫者
-  return {
-    statusCode: 200,
-    body: `${jsonResult}`,
-  };
+        
+        const jsonResult = JSON.stringify(results);
+        // 回傳引數 abc 的值給呼叫者
+        return {
+              statusCode: 200,
+              body: `${jsonResult}`,
+       };
 };
