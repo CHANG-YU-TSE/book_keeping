@@ -52,16 +52,19 @@ exports.handler = async (event, context) => {
         }
 
         const jsonResult = JSON.stringify(results);
-        resolve({
+         return {
           statusCode: 200,
-          body: jsonResult
-        });
+          body: `${jsonResult}`,
+        };
       });
     });
+  
+
+  
   });
 
 
-module.exports = { handler };
+'module.exports = { handler };
 
 
 
