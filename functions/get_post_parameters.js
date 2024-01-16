@@ -13,15 +13,8 @@ exports.handler = async (event, context) => {
     };
   }
 
-  // 在這裡增加調試信息
-  console.log('Raw Event Body:', event.body);
-
   // 從 POST 資料中獲取引數 abc
-  const requestBody = JSON.parse(event.body);
-  const abcValue = requestBody.abc || 'No value provided for abc';
-
-  // 在這裡增加調試信息
-  console.log('Value of abc:', abcValue);
+  const abcValue = JSON.parse(event.body).abc || 'No value provided for abc';
 
   // 回傳引數 abc 的值給呼叫者
   return {
