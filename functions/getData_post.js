@@ -14,16 +14,15 @@ const pool = mysql.createPool(dbConfig);
 
 const handler = async (event, context) => {
   return new Promise((resolve, reject) => {
-    // 從 query 參數中獲取 SQL statement，若未提供預設為 select * from test_table
-  
+
     if (event.httpMethod !== 'POST') {
         return {
                statusCode: 405,
-              body: 'Not POST Method',
+               body: 'Not POST Method',
        };
     }
 
-     // 從 POST 資料中獲取引數 abc
+     // 從 POST 資料中獲取引數 
      const sqlStatement = JSON.parse(event.body).sql || 'No value provided for sql';
 
 
