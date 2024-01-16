@@ -6,6 +6,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 exports.handler = async (event, context) => {
   // 確認請求方法為 POST
+
+  return {
+    statusCode: 200,
+    body: `test_fuck`,
+  };
+  
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
