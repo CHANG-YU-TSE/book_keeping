@@ -14,7 +14,7 @@ const dbConfig = {
 };
 
 // 設定路由處理 HTTP POST 請求
-app.post('/api/get-data', (req, res) => {
+app.post('getData_post', (req, res) => {
   // 從 POST 資料中獲取引數 sql
   const sqlStatement = req.body.sql || 'SELECT * FROM test_table';
 
@@ -49,8 +49,5 @@ app.post('/api/get-data', (req, res) => {
   });
 });
 
-// 啟動伺服器
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+// 導出 handler 函數
+exports.handler = app;
