@@ -22,6 +22,3 @@ exports.handler = async (event, context) => {
     body: `Value of abc: ${abcValue}`,
   };
 };
-
-  };
-};
