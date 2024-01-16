@@ -23,7 +23,7 @@ const handler = async (event, context) => {
     }
 
      // 從 POST 資料中獲取引數 
-     const sqlStatement = JSON.parse(event.body).sql || 'No value provided for sql';
+     const sqlStatement = JSON.parse(event.body).sql || ''select * from test_table'';
 
 
 
