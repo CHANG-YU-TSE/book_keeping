@@ -4,16 +4,18 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 
- return {
+
+
+exports.handler = async (event, context) => {
+  
+  return {
     statusCode: 200,
     body: `test_fuck`,
   };
-
-exports.handler = async (event, context) => {
-  // 確認請求方法為 POST
-
-  
-  
+ 
+ 
+ 
+ // 確認請求方法為 POST
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
