@@ -16,7 +16,7 @@ const handler = async (event, context) => {
 
            if (event.httpMethod !== 'POST') {
             return {
-                 //  statusCode: 405,
+                   statusCode: 405,
                   body: 'Not POST Method',
             };
           }
@@ -33,9 +33,10 @@ const handler = async (event, context) => {
 
     pool.getConnection((err, connection) => {
       if (err) {
+        console.error('Error connecting to database:', err);
         resolve({
-         // statusCode: 500,
-          body: err
+          statusCode: 500,
+          body: 'Internal Server Error'
         });
         return;
       }
@@ -43,17 +44,18 @@ const handler = async (event, context) => {
       connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
-        if (queryError) {          
+        if (queryError) {
+          console.error('Error executing query:', queryError);
           resolve({
-           // statusCode: 500,
-            body: queryError
+            statusCode: 500,
+            body: 'Internal Server Error'
           });
           return;
         }
 
         const jsonResult = JSON.stringify(results);
         resolve({
-         // statusCode: 200,
+          statusCode: 200,
           body: jsonResult
         });
       });
@@ -62,3 +64,5 @@ const handler = async (event, context) => {
 };
 
 module.exports = { handler };
+
+ 
