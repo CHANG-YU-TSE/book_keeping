@@ -55,7 +55,7 @@ const handler = async (event, context) => {
 
         const jsonResult = JSON.stringify(results);
         resolve({
-         // statusCode: 200,
+          statusCode: 200,
           body: jsonResult
         });
       });
