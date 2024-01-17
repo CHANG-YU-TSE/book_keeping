@@ -29,30 +29,8 @@ const handler = async (event, context) => {
      // 從 POST 資料中獲取引數 
      const sqlStatement = JSON.parse(event.body).sql || 'select * from test_table';
 
-
-
     pool.getConnection((err, connection) => {
-      if (err) {
-        // console.error('Error connecting to database:', err);
-        resolve({
-         // statusCode: 500,
-          body: 'Error connecting to database'
-        });
-        return;
-      }
-
-      connection.query(sqlStatement, (queryError, results) => {
-        connection.release();
-
-        if (queryError) {
-         // console.error('Error executing query:', queryError);
-          resolve({
-           // statusCode: 500,
-            body: 'Error executing query'
-          });
-          return;
-        }
-
+    
         const jsonResult = JSON.stringify(results);
         resolve({
           statusCode: 200,
