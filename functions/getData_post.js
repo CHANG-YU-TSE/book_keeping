@@ -33,10 +33,9 @@ const handler = async (event, context) => {
 
     pool.getConnection((err, connection) => {
       if (err) {
-        console.error('Error connecting to database:', err);
         resolve({
          // statusCode: 500,
-          body: 'Internal Server Error'
+          body: err
         });
         return;
       }
@@ -44,11 +43,10 @@ const handler = async (event, context) => {
       connection.query(sqlStatement, (queryError, results) => {
         connection.release();
 
-        if (queryError) {
-          console.error('Error executing query:', queryError);
+        if (queryError) {          
           resolve({
            // statusCode: 500,
-            body: 'Internal Server Error'
+            body: queryError
           });
           return;
         }
